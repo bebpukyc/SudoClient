@@ -36,6 +36,8 @@ BestClient-2.3.zip (large file: 1752MB)
 # Local only, not part of SudoClient
 BestClient-2.2.2/
 BestClient-2.3.zip
+SudoClient-*.zip
+*.zip
 .opencode/
 demo/
 moonwalk.cpp
