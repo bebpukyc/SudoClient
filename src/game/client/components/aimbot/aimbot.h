@@ -25,6 +25,9 @@ public:
 	// true while the physical hook key is held (ignores our own spam OFF-tick).
 	// Used by auto-hammer/auto-aled so they never fight the hook hand.
 	bool IsHookKeyPhysicallyHeld();
+	// true when the assist overwrote the aim this tick (press/block/fire snap).
+	// FakeAim yields those ticks so both can run together.
+	bool m_AimSnapped = false;
 
 private:
 	void DoAimAssist(CNetObj_PlayerInput *pOut, CNetObj_PlayerInput *pPersistent);

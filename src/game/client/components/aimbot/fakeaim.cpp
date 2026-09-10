@@ -4,6 +4,8 @@
 
 #include <engine/shared/config.h>
 
+#include <generated/protocol.h>
+
 #include <game/client/components/controls.h>
 #include <game/client/gameclient.h>
 #include <game/client/prediction/entities/character.h>
@@ -72,9 +74,24 @@ void CFakeAim::OnSnapInput(CNetObj_PlayerInput *pOut, CNetObj_PlayerInput *pLast
 		}
 	}
 
+	// Hammer always hits at the cursor: force release while the hammer is
+	// out and fire is held/requested (covers fast-fire spray, auto-hammer
+	// and the weapon-switch tick the 1-tick sim can't see yet).
+	if(!WillFire)
+	{
+		const int ActiveWeapon = GameClient()->m_PredictedChar.m_ActiveWeapon;
+		if(ActiveWeapon == WEAPON_HAMMER && ((pOut->m_Fire & 1) != 0 || pOut->m_WantedWeapon == WEAPON_HAMMER + 1))
+			WillFire = true;
+	}
+
 	// Hook press edge
 	const bool HookPress = (pOut->m_Hook != 0 && m_LastHook == 0);
 	m_LastHook = pOut->m_Hook;
+
+	// Aimbot owns this tick (press/block/fire snap): yield to the snapped
+	// aim so both systems run together instead of fighting over pData.
+	const bool AimOwned = GameClient()->m_Aimbot.m_AimSnapped;
+	const vec2 SnappedAim((float)pOut->m_TargetX, (float)pOut->m_TargetY);
 
 	// Robot/Lag memory: last real (cursor) aim. Never touches m_aMousePos —
 	// the cursor stays exactly where the player left it.
@@ -84,17 +101,17 @@ void CFakeAim::OnSnapInput(CNetObj_PlayerInput *pOut, CNetObj_PlayerInput *pLast
 		m_RobotAim = RealAim;
 		m_RobotInit = true;
 	}
-	if(WillFire || HookPress)
-		m_RobotAim = RealAim;
+	if(WillFire || HookPress || AimOwned)
+		m_RobotAim = AimOwned ? SnappedAim : RealAim;
 
 	bool FakeActive = false;
 	vec2 FakeOffset(0.0f, 0.0f);
 	bool FakeShowForMe = false;
-	if(WillFire || HookPress)
+	if(WillFire || HookPress || AimOwned)
 	{
-		// release tick: shoot/hook goes to the real aim
+		// release tick: shoot/hook goes to the real (or snapped) aim
 		FakeActive = true;
-		FakeOffset = RealAim;
+		FakeOffset = AimOwned ? SnappedAim : RealAim;
 		FakeShowForMe = true;
 	}
 	else
@@ -159,12 +176,13 @@ void CFakeAim::OnSnapInput(CNetObj_PlayerInput *pOut, CNetObj_PlayerInput *pLast
 
 	// Hold the rendered mask across release ticks so the shown direction
 	// doesn't flicker to the real aim for a frame. Server data untouched.
-	if(m_HaveLastFake && (WillFire || HookPress))
+	// Skipped on aimbot-owned ticks: the shot genuinely goes snapped there.
+	if(m_HaveLastFake && (WillFire || HookPress) && !AimOwned)
 	{
 		m_RenderActive = true;
 		m_RenderOffset = m_LastFake;
 	}
-	if(FakeActive && !WillFire && !HookPress)
+	if(FakeActive && !WillFire && !HookPress && !AimOwned)
 	{
 		m_LastFake = FakeOffset;
 		m_HaveLastFake = true;

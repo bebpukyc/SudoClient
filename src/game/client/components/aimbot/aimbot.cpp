@@ -59,6 +59,7 @@ bool CAimbot::IsHookKeyPhysicallyHeld()
 void CAimbot::DoAimAssist(CNetObj_PlayerInput *pOut, CNetObj_PlayerInput *pPersistent)
 {
 	const int Dummy = g_Config.m_ClDummy;
+	m_AimSnapped = false;
 	if(!g_Config.m_AaEnabled)
 	{
 		m_AaHookAuto = false;
@@ -306,6 +307,7 @@ void CAimbot::DoAimAssist(CNetObj_PlayerInput *pOut, CNetObj_PlayerInput *pPersi
 			if(HookJustPressed)
 			{
 				// быстро навёлся на тишку и хукнул
+				m_AimSnapped = true;
 				const vec2 Dir = normalize(BestPredPos - MyPos);
 				const vec2 AimPos = vec2((int)(Dir.x * GameClient()->m_Controls.GetMaxMouseDistance()), (int)(Dir.y * GameClient()->m_Controls.GetMaxMouseDistance()));
 				pOut->m_TargetX = (int)AimPos.x;
@@ -371,6 +373,7 @@ void CAimbot::DoAimAssist(CNetObj_PlayerInput *pOut, CNetObj_PlayerInput *pPersi
 			m_AaTargetId = -1;
 			if(HookJustPressed)
 			{
+				m_AimSnapped = true;
 				m_AaTargetPos = BlockPos;
 				const vec2 Dir = normalize(BlockPos - MyPos);
 				const vec2 AimPos = vec2((int)(Dir.x * GameClient()->m_Controls.GetMaxMouseDistance()), (int)(Dir.y * GameClient()->m_Controls.GetMaxMouseDistance()));
@@ -404,6 +407,7 @@ void CAimbot::DoAimAssist(CNetObj_PlayerInput *pOut, CNetObj_PlayerInput *pPersi
 	// pixel-precise aim at the predicted target position
 	m_AaTargetId = TargetId;
 	m_AaTargetPos = BestPredPos;
+	m_AimSnapped = true;
 	const vec2 Dir = normalize(BestPredPos - MyPos);
 	const vec2 AimPos = vec2((int)(Dir.x * GameClient()->m_Controls.GetMaxMouseDistance()), (int)(Dir.y * GameClient()->m_Controls.GetMaxMouseDistance()));
 
