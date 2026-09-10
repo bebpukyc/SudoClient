@@ -179,6 +179,38 @@ void CMenus::RenderSettingsStealOther(CUIRect MainView)
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_SymLaserEnable, "Auto laser unfreeze", &g_Config.m_SymLaserEnable, &Body, STEAL_LINE);
 	Body.HSplitTop(6.0f, nullptr, &Body);
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_SymLaserSilent, "Silent", &g_Config.m_SymLaserSilent, &Body, STEAL_LINE);
+
+	// ------------------------------------------------ Fake Aim
+	// Collapsible like ESP/Trajectory: only the enable box when off.
+	{
+		const bool FakeOn = g_Config.m_AaFakeAim != 0;
+		StealPanel(Ui(), TextRender(), &RightView, "Fake Aim", FakeOn ? 172.0f : 60.0f, &Body);
+		DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_AaFakeAim, "Fake Aim", &g_Config.m_AaFakeAim, &Body, STEAL_LINE);
+		if(FakeOn)
+		{
+			Body.HSplitTop(6.0f, nullptr, &Body);
+			DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_AaFakeAimShowForMe, "Visible", &g_Config.m_AaFakeAimShowForMe, &Body, STEAL_LINE);
+			Body.HSplitTop(6.0f, nullptr, &Body);
+			Body.HSplitTop(STEAL_LINE, &Row, &Body);
+			static CButtonContainer s_FakeModeRandom, s_FakeModeRobot, s_FakeModeSpin, s_FakeModeLag;
+			CUIRect MRow = Row, B0, B1, B2, B3;
+			MRow.VSplitLeft(MRow.w / 4.0f, &B0, &MRow);
+			MRow.VSplitLeft(MRow.w / 3.0f, &B1, &MRow);
+			MRow.VSplitLeft(MRow.w / 2.0f, &B2, &B3);
+			const int FakeMode = g_Config.m_AaFakeAimMode;
+			if(DoButton_Menu(&s_FakeModeRandom, "Random", FakeMode == 0, &B0, BUTTONFLAG_LEFT, nullptr, IGraphics::CORNER_L))
+				g_Config.m_AaFakeAimMode = 0;
+			if(DoButton_Menu(&s_FakeModeRobot, "Robot", FakeMode == 1, &B1, BUTTONFLAG_LEFT, nullptr, IGraphics::CORNER_NONE))
+				g_Config.m_AaFakeAimMode = 1;
+			if(DoButton_Menu(&s_FakeModeSpin, "Spin", FakeMode == 2, &B2, BUTTONFLAG_LEFT, nullptr, IGraphics::CORNER_NONE))
+				g_Config.m_AaFakeAimMode = 2;
+			if(DoButton_Menu(&s_FakeModeLag, "Lag", FakeMode == 3, &B3, BUTTONFLAG_LEFT, nullptr, IGraphics::CORNER_R))
+				g_Config.m_AaFakeAimMode = 3;
+			Body.HSplitTop(6.0f, nullptr, &Body);
+			Body.HSplitTop(STEAL_LINE, &Row, &Body);
+			Ui()->DoScrollbarOption(&g_Config.m_AaFakeAimSpeed, &g_Config.m_AaFakeAimSpeed, &Row, "Speed", 1, 100);
+		}
+	}
 }
 
 void CMenus::RenderSettingsStealVisuals(CUIRect MainView)

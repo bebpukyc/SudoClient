@@ -38,7 +38,14 @@ BestClient-2.2.2/
 BestClient-2.3.zip
 .opencode/
 demo/
-moonwalk.cpp
-moonwalk.h
+/moonwalk.cpp
+/moonwalk.h
 website/
-*.png
+Безымянный.png
+src/vendor/
+/src/
+*.zip
+*.dmp
+src rockstar/
+__pycache__/
+/ddnet-libs/

@@ -270,7 +270,9 @@ void CAimbot::DoAimAssist(CNetObj_PlayerInput *pOut, CNetObj_PlayerInput *pPersi
 		}
 
 		float Score;
-		if(g_Config.m_AaClosest)
+		// hammer aims hook-style (closest to the crosshair line) so it
+		// actually connects; other weapons follow Closest target
+		if(g_Config.m_AaClosest && ActiveWeapon != WEAPON_HAMMER)
 		{
 			// the closest tee wins in BOTH axes: whoever is nearest to your tee,
 			// both horizontally and vertically, gets hooked

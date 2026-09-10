@@ -420,6 +420,7 @@ int CControls::SnapInput(int *pData)
 		GameClient()->m_Aimbot.OnPlayerInput(&m_aInputData[g_Config.m_ClDummy], &m_aLastData[g_Config.m_ClDummy]);
 		GameClient()->m_AutoHammer.OnPlayerInput(&m_aInputData[g_Config.m_ClDummy]);
 		GameClient()->m_AutoAled.OnPlayerInput(&m_aInputData[g_Config.m_ClDummy], &m_aLastData[g_Config.m_ClDummy]);
+		GameClient()->m_FakeAim.OnSnapInput(&m_aInputData[g_Config.m_ClDummy], &m_aLastData[g_Config.m_ClDummy]);
 	}
 	GameClient()->m_Aimbot.DoFastFire(&m_aInputData[g_Config.m_ClDummy]);
 
@@ -462,6 +463,9 @@ int CControls::SnapInput(int *pData)
 	GameClient()->m_Tas.Tick(&m_aInputData[g_Config.m_ClDummy], g_Config.m_ClDummy);
 
 	mem_copy(pData, &m_aInputData[g_Config.m_ClDummy], sizeof(m_aInputData[0]));
+	// fake aim (show-for-me OFF): server gets the fake target, prediction
+	// and cursor keep the real one
+	GameClient()->m_FakeAim.PatchSendData((CNetObj_PlayerInput *)pData);
 	return sizeof(m_aInputData[0]);
 }
 

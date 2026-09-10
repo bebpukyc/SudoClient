@@ -346,6 +346,7 @@ void CGameClient::OnConsoleInit()
 				      &m_Aimbot,
 				      &m_AutoAled,
 				      &m_AutoHammer,
+				      &m_FakeAim,
 				      &m_LaserUnfreeze,
 					      &m_Avoid,
 					      &m_Camera,

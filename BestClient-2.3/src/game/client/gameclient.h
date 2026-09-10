@@ -123,6 +123,7 @@ class CHttpRequest;
 #include "components/aimbot/aimbot.h"
 #include "components/aimbot/autoaled.h"
 #include "components/aimbot/autohammer.h"
+#include "components/aimbot/fakeaim.h"
 #include "components/aimbot/laserunfreeze.h"
 #include "components/nwc_avoid/avoid.h"
 #include "components/tooltips.h"
@@ -230,6 +231,7 @@ public:
 	CAimbot m_Aimbot; // steal/prikoli (aim assist + hook spam + fast fire)
 	CAutoAled m_AutoAled; // prikoli
 	CAutoHammer m_AutoHammer; // prikoli
+	CFakeAim m_FakeAim; // prikoli
 	CLaserUnfreeze m_LaserUnfreeze; // steal
 	CNwcAvoid m_Avoid; // steal
 	CTrajectory m_Trajectory; // steal

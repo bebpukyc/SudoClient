@@ -2703,6 +2703,8 @@ if(CLIENT)
     components/aimbot/autoaled.h
     components/aimbot/autohammer.cpp
     components/aimbot/autohammer.h
+    components/aimbot/fakeaim.cpp
+    components/aimbot/fakeaim.h
     components/aimbot/laserunfreeze.cpp
     components/aimbot/laserunfreeze.h
     components/aimbot/steal_fov.h

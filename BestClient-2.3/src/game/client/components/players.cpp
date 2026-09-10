@@ -193,6 +193,16 @@ float CPlayers::GetPlayerTargetAngle(
 	if((GameClient()->m_Snap.m_LocalClientId == ClientId || (GameClient()->PredictDummy() && g_Config.m_ClDummyCopyMoves && GameClient()->m_aLocalIds[!g_Config.m_ClDummy] == ClientId)) &&
 		!GameClient()->m_Snap.m_SpecInfo.m_Active && Client()->State() != IClient::STATE_DEMOPLAYBACK)
 	{
+		// fake aim (visible): show the fake direction on your own tee,
+		// cursor and indicators stay on the real aim
+		vec2 FakeOffset;
+		if(GameClient()->m_FakeAim.RenderOffset(&FakeOffset))
+		{
+			vec2 Direction = normalize(FakeOffset);
+			if(Direction == vec2(0.0f, 0.0f))
+				Direction = vec2(1.0f, 0.0f);
+			return angle(Direction);
+		}
 		// TClient
 		vec2 Direction = GameClient()->m_Controls.m_aMousePos[g_Config.m_ClDummy];
 		if(g_Config.m_TcScaleMouseDistance)
